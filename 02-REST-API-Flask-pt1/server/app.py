@@ -16,6 +16,18 @@
         # flask db upgrade 
         # python seed.py
 
+# Restful
+
+# | HTTP Verb 	|       Path       	| Description        	|
+# |-----------	|:----------------:	|--------------------	|
+# | GET       	|   /productions   	| READ all resources 	|
+# | GET       	| /productions/:id 	| READ one resource   	|
+# | POST      	|   /productions   	| CREATE one resource 	|
+# | PATCH/PUT 	| /productions/:id 	| UPDATE one resource	|
+# | DELETE    	| /productions/:id 	| DESTROY one resource 	|
+
+
+
 from flask import Flask, request, make_response, jsonify
 from flask_migrate import Migrate
 
