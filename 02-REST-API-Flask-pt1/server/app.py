@@ -34,7 +34,7 @@ from flask_migrate import Migrate
 # 1. ✅ Import `Api` and `Resource` from `flask_restful`
     # ❓ What do these two classes do at a higher level? 
 
-from models import db, Production, CastMembers
+from models import db, Production, CastMember
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
