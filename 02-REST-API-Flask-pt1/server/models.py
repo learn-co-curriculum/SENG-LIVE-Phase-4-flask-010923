@@ -19,16 +19,16 @@ class Production(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    crew_members = db.relationship('CrewMember', backref='production')
+    cast_members = db.relationship('CastMembers', backref='production')
 
-    # 7.1 ✅ Create a serialize rule that will help add our `crew_members` to the response.
+    # 7.1 ✅ Create a serialize rule that will help add our `cast_members` to the response.
 
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'
 
-# 8. ✅ Pass `SerializerMixin` to `CrewMember`
-class CrewMember(db.Model):
-    __tablename__ = 'crew_members'
+# 8. ✅ Pass `SerializerMixin` to `CastMembers`
+class CastMembers(db.Model):
+    __tablename__ = 'cast_members'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
