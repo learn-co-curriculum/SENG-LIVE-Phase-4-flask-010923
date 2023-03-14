@@ -34,7 +34,7 @@ with app.app_context():
     db.session.commit()
 
     hamlet_roles = ['Hamlet', 'Ophelia', 'Polonius', 'Laertes', 'Horatio', 'Gertrude', 'Ghost' ]
-    hamlet_cast_members = [CastMemebrs(name=fake.name(), role=role, production_id=p1.id) for role in hamlet_roles]
+    hamlet_cast_members = [CastMember(name=fake.name(), role=role, production_id=p1.id) for role in hamlet_roles]
     db.session.add_all(hamlet_cast_members)
     db.session.commit()
 
