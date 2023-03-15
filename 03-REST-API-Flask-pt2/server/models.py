@@ -18,8 +18,8 @@ class Production(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     cast_members = db.relationship('CastMember', backref='production')
-
-    serialize_rules = ('-cast_members.production',)
+    #serialize_only = ('title','genre')
+    serialize_rules = ('-cast_members.production','-created_at', '-updated_at')
 
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'

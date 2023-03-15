@@ -11,13 +11,25 @@
     # flask db revision --autogenerate -m'Create tables' 
     # flask db upgrade 
     # python seed.py
+
+# Restful
+
+# | HTTP Verb 	|       Path       	| Description        	|
+# |-----------	|:----------------:	|--------------------	|
+# | GET       	|   /productions   	| READ all resources 	|
+# | GET       	| /productions/:id 	| READ one resource   	|
+# | POST      	|   /productions   	| CREATE one resource 	|
+# | PATCH/PUT 	| /productions/:id 	| UPDATE one resource	|
+# | DELETE    	| /productions/:id 	| DESTROY one resource 	|
+
+
 from flask import Flask, request, make_response, abort
 from flask_migrate import Migrate
 
 from flask_restful import Api, Resource
 
-# 1.✅ Import NotFound from werkzeug.exceptions for error handling
-
+# 2.✅ Import NotFound from werkzeug.exceptions for error handling
+from werkzeug.exceptions import NotFound
 
 from models import db, Production, CastMember
 
@@ -71,8 +83,10 @@ api.add_resource(Productions, '/productions')
 class ProductionByID(Resource):
     def get(self,id):
         production = Production.query.filter_by(id=id).first()
-# 3.✅ If a production is not found raise the NotFound exception
-    
+# 4.✅ If a production is not found raise the NotFound exception
+        if not production:
+            abort(404, 'The Production you were looking for was not found!')
+        
         production_dict = production.to_dict()
         response = make_response(
             production_dict,
@@ -81,34 +95,48 @@ class ProductionByID(Resource):
         
         return response
 
-# 4.✅ Patch
-    # 4.1 Create a patch method that takes self and id
-    # 4.2 Query the Production from the id
-    # 4.3 If the production is not found raise the NotFound exception
-    # 4.4 Loop through the request.form object and update the productions attributes. Note: Be cautions of the data types to avoid errors.
-    # 4.5 add and commit the updated production 
-    # 4.6 Create and return the response
-  
-# 5.✅ Delete
-    # 5.1 Create a delete method, pass it self and the id
-    # 5.2 Query the Production 
-    # 5.3 If the production is not found raise the NotFound exception
-    # 5.4 delete the production and commit 
-    # 5.5 create a response with the status of 204 and return the response 
-  
+# 5.✅ Patch
 
-   
+    def patch(self,id):
+        production = Production.query.filter_by(id=id).first()
+        if not production:
+            abort(404, 'The Production you were trying to update was not found!')
+        
+        request_json = request.get_json()
+        for key in request_json:
+            setattr(production,key,request_json[key])
+        
+        db.session.add(production)
+        db.session.commit()
+
+        response = make_response(
+            production.to_dict(),
+            200
+        )
+
+        return response
+
+
+ 
+        
+# 6.✅ Delete
+    def delete(self, id):
+            production = Production.query.filter_by(id=id).first()
+            if not production:
+                abort(404, 'The Production you were trying to delete was not found!')
+
+            db.session.delete(production)
+            db.session.commit()
+
+            response = make_response('', 204)
+
+            return response
+
+ 
+
 api.add_resource(ProductionByID, '/productions/<int:id>')
 
-# 2.✅ use the @app.errorhandler() decorator to handle Not Found
-    # 2.1 Create the decorator and pass it NotFound
-    # 2.2 Use make_response to create a response with a message and the status 404
-    # 2.3 return t he response
 
-
-# To run the file as a script
-# if __name__ == '__main__':
-#     app.run(port=5000, debug=True)
 
 #Student Exercises 
 class CastMembers(Resource):
@@ -139,4 +167,67 @@ class CastMembers(Resource):
         )
         return response
 
+
+
 api.add_resource(CastMembers, '/cast_members')
+
+#'/cast_members/<int:id>'
+class CastMembersByID(Resource):
+    def get(self, id):
+        cast_member = CastMember.query.filter_by(id=id).first()
+        if not cast_member:
+            abort(404, 'The cast member you are looking for was not found')
+        response = make_response(
+            cast_member.to_dict(),
+            200
+        )
+
+        return response
+    #patch
+    def patch(self, id):
+        cast_member = CastMember.query.filter_by(id=id).first()
+        if not cast_member:
+            abort(404, 'The cast member you were trying to update was not found!')
+
+        request_json = request.get_json()
+        for key in request_json:
+            setattr(cast_member, key, request_json[key])
+
+        db.session.add(cast_member)
+        db.session.commit()
+
+        response = make_response(
+            cast_member.to_dict(),
+            200
+        )
+
+        return response
+
+    def delete(self, id):
+        cast_member = CastMember.query.filter_by(id=id).first()
+        if not cast_member:
+            abort(404, 'The cast member you were trying to delete can not be found!')
+        
+        db.session.delete(cast_member)
+        db.session.commit()
+
+        response = make_response('',204)
+
+        return response
+
+api.add_resource(CastMembersByID, '/cast_members/<int:id>')
+
+
+# 3.✅ use the @app.errorhandler() decorator to handle Not Found
+@app.errorhandler(NotFound)
+def handle_not_found(e):
+    response = make_response(
+        "NotFound: Sorry the resource you are looking for can not be found!",
+        404
+    )
+    return response
+
+
+# To run the file as a script
+# if __name__ == '__main__':
+#     app.run(port=5000, debug=True)
