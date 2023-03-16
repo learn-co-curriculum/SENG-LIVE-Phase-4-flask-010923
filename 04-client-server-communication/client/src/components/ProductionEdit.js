@@ -8,6 +8,11 @@ import * as yup from "yup"
 
 function ProductionFormEdit({updateProduction, production_edit}) {
   const history = useHistory()
+  const formSchema = yup.object().shape({
+    title: yup.string().required("Must enter a title"),
+    budget: yup.number().positive()
+  })
+
  
         const formik = useFormik({
           initialValues: {
