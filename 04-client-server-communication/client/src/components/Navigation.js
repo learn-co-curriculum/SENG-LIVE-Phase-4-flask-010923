@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 import { GiHamburgerMenu } from 'react-icons/gi'
 
-function Navigation() {
+function Navigation({handleEdit}) {
  const [menu, setMenu] = useState(false)
   
     return (
@@ -16,7 +16,7 @@ function Navigation() {
            </div>:
            <ul>
             <li onClick={() => setMenu(!menu)}>x</li>
-            <li><Link to='/productions/new'>New Production</Link></li>
+            <li ><Link to='/productions/new'>New Production</Link></li>
             <li><Link to='/'> Home</Link></li>
            </ul>
            }

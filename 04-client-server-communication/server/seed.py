@@ -2,7 +2,7 @@
 from faker import Faker
 
 from app import app
-from models import db, Production, CrewMember
+from models import db, Production, CastMember
 
 db.init_app(app)
 
@@ -10,7 +10,7 @@ fake = Faker()
 
 with app.app_context():   
     Production.query.delete()
-    CrewMember.query.delete()
+    CastMember.query.delete()
 
     productions = []
  
@@ -34,22 +34,22 @@ with app.app_context():
     db.session.commit()
 
     hamlet_roles = ['Hamlet', 'Ophelia', 'Polonius', 'Laertes', 'Horatio', 'Gertrude', 'Ghost' ]
-    hamlet_crew_members = [CrewMember(name=fake.name(), role=role, production_id=p1.id) for role in hamlet_roles]
-    db.session.add_all(hamlet_crew_members)
+    hamlet_cast_members = [CastMember(name=fake.name(), role=role, production_id=p1.id) for role in hamlet_roles]
+    db.session.add_all(hamlet_cast_members)
     db.session.commit()
 
     cats_roles = ['Mr. Mistoffelees', 'Bombalurina', 'Rumpletezer', 'Grizabella']
-    cats_crew_members = [CrewMember(name=fake.name(), role=role, production_id=p2.id) for role in cats_roles]
-    db.session.add_all(cats_crew_members)
+    cats_cast_members = [CastMember(name=fake.name(), role=role, production_id=p2.id) for role in cats_roles]
+    db.session.add_all(cats_cast_members)
     db.session.commit()
 
     carmen_roles = ['Carmen', 'Escamillo', 'Jose', 'Mercedes', 'Dancaire']
-    carmen_crew_members = [CrewMember(name=fake.name(), role=role, production_id=p3.id) for role in carmen_roles]
-    db.session.add_all(carmen_crew_members)
+    carmen_cast_members = [CastMember(name=fake.name(), role=role, production_id=p3.id) for role in carmen_roles]
+    db.session.add_all(carmen_cast_members)
     db.session.commit()
 
     hamilton_roles = ['Alexander Hamilton', 'King George III', 'Marquis de Lafayett', 'Angelica Schuyler Church', 'Peggy Schuyler', 'Thomas Jefferson']
-    hamilton_crew_members = [CrewMember(name=fake.name(), role=role, production_id=p4.id) for role in hamilton_roles]
-    db.session.add_all(hamilton_crew_members)
+    hamilton_cast_members = [CastMember(name=fake.name(), role=role, production_id=p4.id) for role in hamilton_roles]
+    db.session.add_all(hamilton_cast_members)
     db.session.commit()
 
