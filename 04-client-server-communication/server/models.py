@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
 # 1.✅ Import validates from sqlalchemy.orm
-from sqlalchemy.orm import validates
 db = SQLAlchemy()
 
 class Production(db.Model, SerializerMixin):
@@ -30,16 +29,7 @@ class Production(db.Model, SerializerMixin):
 
 
 # 3.✅ Use the "validates" decorator to create a validation for images
-    # 3.1 Pass the decorator 'image'
-    # 3.2 Define a validate_image method, pass it self, key and image_path
-    # 3.3 If .jpg is not in the image passed, raise the ValueError exceptions else 
-    # return the image_path
-    # Note: Feel free to try out more validations!  
-    @validates('image')
-    def validate_image(self, key, image_path):
-        if '.jpg' not in image_path:
-            raise ValueError('Image file type must be a jpg')
-        return image_path
+ 
 
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'
