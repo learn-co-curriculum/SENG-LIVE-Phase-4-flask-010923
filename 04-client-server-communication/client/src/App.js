@@ -16,6 +16,12 @@ function App() {
   const [production_edit, setProductionEdit] = useState(false)
   const history = useHistory()
   //5.✅ GET Productions
+  useEffect(()=>{
+    fetch('/productions')
+    .then(res => res.json())
+    .then(setProductions)
+  },[])
+
   
   // 6.✅ navigate to client/src/components/ProductionForm.js
 
