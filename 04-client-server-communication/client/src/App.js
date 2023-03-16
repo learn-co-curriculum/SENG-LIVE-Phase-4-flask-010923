@@ -19,7 +19,7 @@ function App() {
   
   // 6.✅ navigate to client/src/components/ProductionForm.js
 
-  const addProduction = (production) => setProductions(current => [...current,production])
+  const addProduction = (production) => setProductions(productions => [...productions,production])
   const updateProduction = (updated_production) => setProductions(productions => productions.map(production =>{
     if(production.id == updated_production.id){
       return updated_production
@@ -27,6 +27,8 @@ function App() {
       return production
     }
   } ))
+  const deleteProduction = (deleted_production) => setProductions(productions => productions.filter((production) => production.id !== deleted_production.id) )
+
   const handleEdit = (production) => {
     setProductionEdit(production)
     history.push(`/productions/edit/${production.id}`)
@@ -43,7 +45,7 @@ function App() {
           <ProductionEdit updateProduction={updateProduction} production_edit={production_edit}/>
         </Route>
         <Route path='/productions/:id'>
-            <ProductionDetail handleEdit={handleEdit} />
+            <ProductionDetail handleEdit={handleEdit} deleteProduction={deleteProduction} />
         </Route>
         <Route exact path='/'>
           <Home  productions={productions} />

@@ -2,7 +2,7 @@ import  {useParams, useHistory } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 
-function ProductionDetail({handleEdit}) {
+function ProductionDetail({handleEdit, deleteProduction}) {
   const [production, setProduction] = useState({cast_members:[]})
   const [error, setError] = useState(null)
   //Student Challenge: GET One 
