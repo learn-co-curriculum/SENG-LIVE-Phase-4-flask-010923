@@ -9,10 +9,6 @@ db = SQLAlchemy()
 class Production(db.Model, SerializerMixin):
     __tablename__ = 'productions'
     
-    __table_args__ = (
-        db.CheckConstraint('budget > 100'),
-    )
-
     id = db.Column(db.Integer, primary_key=True)
       
     title = db.Column(db.String, nullable=False)
@@ -24,9 +20,9 @@ class Production(db.Model, SerializerMixin):
     ongoing = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
-    crew_members = db.relationship('CrewMember', backref='production')
+    cast_members = db.relationship('CastMember', backref='production')
         
-    serialize_rules = ('-crew_members.production',)
+    serialize_rules = ('-cast_members.production',)
 
     @validates('image')
     def validate_image(self, key, image_path):
@@ -38,8 +34,8 @@ class Production(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'
 
-class CrewMember(db.Model, SerializerMixin):
-    __tablename__ = 'crew_members'
+class CastMember(db.Model, SerializerMixin):
+    __tablename__ = 'cast_members'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -48,7 +44,7 @@ class CrewMember(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     production_id = db.Column(db.Integer, db.ForeignKey('productions.id'))
     
-    serialize_rules = ('-production.crew_members',)
+    serialize_rules = ('-production.cast_members',)
 
     def __repr__(self):
         return f'<Production Name:{self.name}, Role:{self.role}'

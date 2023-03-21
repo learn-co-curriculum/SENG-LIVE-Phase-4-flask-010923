@@ -12,12 +12,13 @@
         # flask db revision --autogenerate -m'Create tables' 
         # flask db upgrade 
         # python seed.py
+        # cd into client and run `npm i`
 
 # Running React together 
-     # In Terminal, run:
+     # In Terminal cd into the root directory, run:
         # `honcho start -f Procfile.dev`
 
-from flask import Flask, request, make_response, session, jsonify
+from flask import Flask, request, make_response, abort, session, jsonify
 from flask_migrate import Migrate
 
 from flask_restful import Api, Resource
@@ -25,7 +26,7 @@ from werkzeug.exceptions import NotFound, Unauthorized
 
 from flask_cors import CORS
 
-from models import db, Production, CrewMember, User
+from models import db, Production, CastMember, User
 
 app = Flask(__name__)
 CORS(app)
@@ -55,14 +56,17 @@ class Productions(Resource):
 
     def post(self):
         form_json = request.get_json()
-        new_production = Production(
-            title=form_json['title'],
-            genre=form_json['genre'],
-            budget=int(form_json['budget']),
-            image=form_json['image'],
-            director=form_json['director'],
-            description=form_json['description']
-        )
+        try:
+            new_production = Production(
+                title=form_json['title'],
+                genre=form_json['genre'],
+                budget=int(form_json['budget']),
+                image=form_json['image'],
+                director=form_json['director'],
+                description=form_json['description']
+            )
+        except ValueError as e:
+            abort(422,e.args[0])
 
         db.session.add(new_production)
         db.session.commit()
@@ -81,7 +85,7 @@ class ProductionByID(Resource):
     def get(self,id):
         production = Production.query.filter_by(id=id).first()
         if not production:
-            raise NotFound
+            abort(404, 'The Production you were looking for was not found')
         production_dict = production.to_dict()
         response = make_response(
             production_dict,
@@ -93,7 +97,7 @@ class ProductionByID(Resource):
     def patch(self, id):
         production = Production.query.filter_by(id=id).first()
         if not production:
-            raise NotFound
+            abort(404, 'The Production you were trying to update for was not found')
 
         for attr in request.form:
             setattr(production, attr, request.form[attr])
@@ -115,7 +119,7 @@ class ProductionByID(Resource):
     def delete(self, id):
         production = Production.query.filter_by(id=id).first()
         if not production:
-            raise NotFound
+            abort(404, 'The Production you were trying to delete was not found')
         db.session.delete(production)
         db.session.commit()
 

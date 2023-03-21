@@ -2,25 +2,30 @@ import  {useParams, useHistory } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 
-function ProductionDetail() {
-  const [production, setProduction] = useState({crew_members:[], performers_and_roles:[]})
+function ProductionDetail({handleEdit, deleteProduction}) {
+  const [production, setProduction] = useState({cast_members:[]})
   const [error, setError] = useState(null)
-  
+  //Student Challenge: GET One 
   const params = useParams()
   const history = useHistory()
   useEffect(()=>{
     fetch(`/productions/${params.id}`)
-    .then(res => { 
-      if(res.ok){
-        res.json().then(data => setProduction(data))
-      } else {
-        res.json().then(data => setError(data.error))
-      }
-    })
+    .then(res => res.json())
+    .then(setProduction)
   },[])
 
+  const handleDelete = (production) => {
+    fetch(`/productions/${production.id}`,{
+      method:"DELETE"
+    })
+    .then(() => {
+      deleteProduction(production)
+      history.push('/')
+    })
+  }
+
   
-  const {id, title, genre, image,description, crew_members} = production 
+  const {id, title, genre, image,description, cast_members} = production 
   if(error) return <h2>{error}</h2>
   return (
       <CardDetail id={id}>
@@ -33,12 +38,14 @@ function ProductionDetail() {
               <p>{description}</p>
               <h2>Cast Members</h2>
               <ul>
-                {crew_members.map(crew => <li>{`${crew.role} : ${crew.name}`}</li>)}
+                {cast_members.map(cast => <li>{`${cast.role} : ${cast.name}`}</li>)}
               </ul>
             </div>
             <img src={image}/>
           </div>
-      <button >Buy Ticket</button>
+      <button onClick={()=> handleEdit(production)} >Edit Production</button>
+      <button onClick={()=> handleDelete(production)} >Delete Production</button>
+
       </CardDetail>
     )
   }
