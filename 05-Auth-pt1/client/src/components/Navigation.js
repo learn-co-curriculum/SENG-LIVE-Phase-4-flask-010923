@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
 
-function Navigation({updateUser}) {
+function Navigation({updateUser, user}) {
  const [menu, setMenu] = useState(false)
  const history = useHistory()
 
@@ -12,9 +12,21 @@ function Navigation({updateUser}) {
   //6.1 On a successful delete clear the user from state (updateUser is passed down from app via props) and redirect back to the authentication route
 // 7.✅ Head back to server/app.py to build a route that will keep our user logged in with sessions
  const handleLogout = () => {
+  //'/logout
+  //When the user is logged out send them to the login page '/authentication'
+  //Only send them to the login page IF the res comes back with a res within the 200 range
+  fetch('/logout',{
+    method:'DELETE'
+  })
+  .then(res => {
+    if(res.ok){
+        updateUser(null)
+        history.push('/authentication')
+    }
+  })
   
  }
-
+console.log(user)
     return (
         <Nav> 
          <NavH1>Flatiron Theater Company</NavH1>
@@ -25,7 +37,8 @@ function Navigation({updateUser}) {
            </div>:
            <ul>
             <li onClick={() => setMenu(!menu)}>x</li>
-            <li><Link to='/productions/new'>New Production</Link></li>
+            {user.admin == "1" || user.admin == true &&  <li><Link to='/productions/new'>New Production</Link></li>}
+           
             <li><Link to='/'> Home</Link></li>
             <li><Link to='/authentication'> Login/Signup</Link></li>
             <li onClick={handleLogout}> Logout </li>
@@ -52,10 +65,11 @@ const Nav = styled.div`
 const Menu = styled.div`
   display: flex;
   align-items: center;
+  font-family:Arial;
   a{
     text-decoration: none;
     color:white;
-    font-family:Arial;
+    
   }
   a:hover{
     color:pink

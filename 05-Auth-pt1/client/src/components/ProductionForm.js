@@ -1,11 +1,18 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useFormik } from "formik"
 import * as yup from "yup"
 
-function ProductionForm({addProduction}) {
+function ProductionForm({addProduction, user}) {
   const history = useHistory()
+
+  useEffect(() => {
+    if(user.admin == "0"){
+      history.push('/')
+    }
+  })
+
   const formSchema = yup.object().shape({
     title: yup.string().required("Must enter a title"),
     budget: yup.number().positive()

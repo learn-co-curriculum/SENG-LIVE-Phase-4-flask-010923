@@ -37,7 +37,7 @@ app.json.compact = False
 # Set up:
     # generate a secrete key `python -c 'import os; print(os.urandom(16))'`
 
-app.secret_key = 'Secret Key Here!'
+app.secret_key = b'\xf7\x93\xedur\x9d\xa0\r\x9c\x84M\x16\x1d\xb5)\xad'
 
 migrate = Migrate(app, db)
 db.init_app(app)
@@ -129,15 +129,23 @@ class ProductionByID(Resource):
 api.add_resource(ProductionByID, '/productions/<int:id>')
 
 # 1.✅ User
-    # A user model was added to "models.py" along with an Authentication component in client/src/components/Authentication.sj
-    # 1.1 Create a User POST route by creating a class Users that inherits from Resource
-    # 1.2 Add the route '/users' with api.add_resource()
-    # 1.3 Create a POST method
-        # 1.3.1 use .get_json() to convert the request json 
-        # 1.3.2 create a new user with the request data
-        # 1.3.3 add and commit the new user
-        # 1.3.4 Save the new users id to the session hash
-        # 1.3.5 Make a response and send it back to the client
+class Users(Resource):
+    def post(self):
+        form_json = request.get_json()
+        new_user = User(
+            name=form_json['name'],
+            email=form_json['email']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        session['user_id'] = new_user.id
+        #import ipdb; ipdb.set_trace()
+        response = make_response(
+            new_user.to_dict(),
+            201
+        )
+        return response
+api.add_resource(Users, '/users')
 
 # 2.✅ Test this route in the client/src/components/Authentication.sj 
 
@@ -150,22 +158,43 @@ api.add_resource(ProductionByID, '/productions/<int:id>')
         # 3.3.3 If found set the user_id to the session hash
         # 3.3.4 convert the user to_dict and send a response back to the client 
     #3.4 Toggle the signup form to login and test the login route
+class Login(Resource):
+    def post(self):
+        user = User.query.filter_by(name=request.get_json()['name']).first()
+        session['user_id'] = user.id
+        response = make_response(
+            user.to_dict(),
+            200
+        )
+        return response
+
+api.add_resource(Login, '/login')
 
 
 # 4.✅ Create an AuthorizedSession class that inherits from Resource
-    # 4.1 use api.add_resource to add an authorized route
-    # 4.2 Create a get method
-        # 4.2.1 Access the user_id from session with session.get
-        # 4.2.2 Use the user id to query the user with a .filter
-        # 4.2.3 If the user id is in sessions and found make a response to send to the client. else raise the Unauthorized exception (Note- Unauthorized is being imported from werkzeug.exceptions)
-
+class AuthorizedSession(Resource):
+    def get(self):
+        user = User.query.filter_by(id=session.get('user_id')).first()
+        if user:
+            response = make_response(
+                user.to_dict(),
+                200
+            )
+            return response
+        else:
+            abort(401, "Unauthorized")
+api.add_resource(AuthorizedSession, '/authorized')
+    
 # 5.✅ Head back to client/src/App.js to restrict access to our app!
 
 # 6.✅ Logout 
-    # 6.1 Create a class Logout that inherits from Resource 
-    # 6.2 Create a method called delete
-    # 6.3 Clear the user id in session by setting the key to None
-    # 6.4 create a 204 no content response to send back to the client
+
+class Logout(Resource):
+    def delete(self):
+        session['user_id'] = None 
+        response = make_response('',204)
+        return response
+api.add_resource(Logout, '/logout')
 
 # 7.✅ Navigate to client/src/components/Navigation.js to build the logout button!
 
@@ -177,6 +206,12 @@ api.add_resource(ProductionByID, '/productions/<int:id>')
         # 8.4 Set the cookies in the response with set_cookie and pass it a key 'mode' and a value 'dark'
         # 8.5 return the response, run the server and check the response in the browser.
         # Note: Now is a great time to view the cookies and talk about security concerns
+@app.route('/dark_mode', methods=['GET'])
+def dark_mode():
+    response = make_response(jsonify({
+        "cookies":request.cookies["mode"]
+    }),200)
+    return response
 
 
 @app.errorhandler(NotFound)
