@@ -14,6 +14,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 # 3.✅ Import bcyrpt from app
 
+
 db = SQLAlchemy()
 class Production(db.Model, SerializerMixin):
     __tablename__ = 'productions'
@@ -33,9 +34,9 @@ class Production(db.Model, SerializerMixin):
     ongoing = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
-    crew_members = db.relationship('CrewMember', backref='production')
+    cast_members = db.relationship('CastMember', backref='production')
         
-    serialize_rules = ('-crew_members.production',)
+    serialize_rules = ('-cast_members.production',)
 
     @validates('image')
     def validate_image(self, key, image_path):
@@ -44,13 +45,11 @@ class Production(db.Model, SerializerMixin):
         return image_path
     
 
-
-
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'
 
-class CrewMember(db.Model, SerializerMixin):
-    __tablename__ = 'crew_members'
+class CastMember(db.Model, SerializerMixin):
+    __tablename__ = 'cast_members'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -59,7 +58,7 @@ class CrewMember(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
     production_id = db.Column(db.Integer, db.ForeignKey('productions.id'))
     
-    serialize_rules = ('-production.crew_members',)
+    serialize_rules = ('-production.cast_members',)
 
     def __repr__(self):
         return f'<Production Name:{self.name}, Role:{self.role}'
@@ -74,19 +73,19 @@ class User(db.Model, SerializerMixin):
 
     # 4.✅ Add a column _password_hash
         # Note: When an underscore is used, it's a sign that the variable or method is for internal use.
-
-    admin = db.Column(db.String, default=False)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
    
     # 5.✅ Create a hybrid_property that will protect the hash from being viewed
+    
     # 6.✅ Navigate to app
   
     # 11.✅ Create a setter method called password_hash that takes self and a password.
         #11.1 Use bcyrpt to generate the password hash with bcrypt.generate_password_hash
         #11.2 Set the _password_hash to the hashed password
 
+
+
      # 12.✅ Create an authenticate method that uses bcyrpt to verify the password against the hash in the DB with bcrypt.check_password_hash 
-  
+
+     # 13.✅ Navigate to app
     def __repr__(self):
         return f'USER: ID: {self.id}, Name {self.name}, Email: {self.email}, Admin: {self.admin}'
