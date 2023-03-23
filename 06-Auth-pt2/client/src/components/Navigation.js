@@ -56,10 +56,10 @@ const Nav = styled.div`
 const Menu = styled.div`
   display: flex;
   align-items: center;
+  font-family:Arial;
   a{
     text-decoration: none;
     color:white;
-    font-family:Arial;
   }
   a:hover{
     color:pink

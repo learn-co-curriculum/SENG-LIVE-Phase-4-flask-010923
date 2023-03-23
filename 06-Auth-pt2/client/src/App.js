@@ -15,6 +15,7 @@ function App() {
 
   useEffect(() => {
     fetchUser()
+    fetchProductions()
   },[])
 
   const fetchProductions = () => (
@@ -30,10 +31,8 @@ function App() {
         res.json()
         .then(data => {
           setUser(data)
-          fetchProductions()
         })
       } else {
-        console.log('hi')
         setUser(null)
       }
     })
