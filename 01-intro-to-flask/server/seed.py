@@ -5,7 +5,6 @@
     # app from app
     # db and Production from models
 
-# 6. ✅ Initialize the SQLAlchemy instance with `db.init_app(app)`
 
 
 # 7. ✅ Create application context `with app.app_context():`
