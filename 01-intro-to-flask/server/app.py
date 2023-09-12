@@ -10,6 +10,7 @@
 # import Flask from flask
 # later, also import jsonify and make_response
 # import Migrate from flask_migrate
+# import db and newly created Production from Models
 
 # 3. ✅ Initialize the App
     # Configure the database
