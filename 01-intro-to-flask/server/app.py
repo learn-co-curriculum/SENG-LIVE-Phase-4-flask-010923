@@ -7,7 +7,9 @@
 # 1. ✅ Navigate to `models.py`
 
 # 2. ✅ Set Up Imports
-
+# import Flask from flask
+# later, also import jsonify and make_response
+# import Migrate from flask_migrate
 
 # 3. ✅ Initialize the App
     # Configure the database
