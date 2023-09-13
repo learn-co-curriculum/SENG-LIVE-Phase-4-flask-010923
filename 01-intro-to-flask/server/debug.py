@@ -8,4 +8,6 @@ from models import db, Production
     #   Production.query.all()
 # 12.✅ navigate to app.py
 if __name__ == '__main__':
-    import ipdb; ipdb.set_trace()
+    with app.app_context():
+        import ipdb; ipdb.set_trace()
+        pass
