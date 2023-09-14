@@ -11,6 +11,7 @@ fake = Faker()
 with app.app_context():   
     Production.query.delete()
     CastMember.query.delete()
+    db.session.commit()
 
     productions = []
  

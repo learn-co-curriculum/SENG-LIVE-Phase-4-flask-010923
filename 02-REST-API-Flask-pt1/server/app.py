@@ -10,11 +10,13 @@
 # Set Up:
     # In Terminal, `cd` into `server` and run the following:
         # export FLASK_APP=app.py
-        # export FLASK_RUN_PORT=5000
+        # export FLASK_RUN_PORT=5555
+        # export FLASK_DEBUG=1
         # flask db init
         # flask db revision --autogenerate -m 'Create tables' 
         # flask db upgrade 
         # python seed.py
+        # flask shell
 
 # Restful
 
@@ -48,6 +50,15 @@ db.init_app(app)
 # 2. ✅ Initialize the Api
     # `api = Api(app)`
 
+    # 2.1 Create routes for cast members without RESTful conventions
+    # 2.2 Create a method to get all cast members
+    # 2.3 Create a method for getting a single cast member
+
+
+
+
+
+
 # 3. ✅ Create a Production class that inherits from Resource
 
 # 4. ✅ Create a GET (All) Route
@@ -61,7 +72,8 @@ db.init_app(app)
     #       200
     #  )
     # 4.5 Return `response`.
-    # 4.6 After building the route, run the server and test in the browser.
+    # 4.6 Talk about response codes and show off the most common ones
+    # 4.7 After building the route, run the server and test in the browser.
   
 # 5. ✅ Serialization
     # This is great, but there's a cleaner way to do this! Serialization will allow us to easily add our 
