@@ -94,6 +94,7 @@ def cast_members ( ) :
         new_cm = CastMember(
             name = rq[ 'name' ],
             role = rq[ 'role' ]
+            # A cast member should be part of a production!!!
         )
         db.session.add( new_cm )
         db.session.commit()

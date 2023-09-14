@@ -99,8 +99,6 @@ class CastMember(db.Model, SerializerMixin):
         cm = self.to_dict()
         cm[ 'production' ] = self.production.to_dict()
         return cm
-    
-    # 3.05 Cover edge case if no production exists on the cast member
 
     # 3.1 Create a validation list for holding validation errors
 
@@ -111,6 +109,7 @@ class CastMember(db.Model, SerializerMixin):
     # 3.4 Create a validation for the role. It must be a string and can't be blank.
 
     # 3.5 Create a validation that makes sure the Production exists
+        # A cast member must be part of a production!!! 🫡
 
 
 
