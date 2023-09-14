@@ -41,6 +41,6 @@ class CastMember(db.Model):
     # 8.1 ✅ Create a serialize rule that will help add our `production` to the response.
       
     def __repr__(self):
-        return f'<Production Name:{self.name}, Role:{self.role}'
+        return f'<CastMember Name:{self.name}, Role:{self.role}'
 
  # 9. ✅ Navigate back to `app.py` for further steps.
