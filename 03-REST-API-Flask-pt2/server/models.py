@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 # ✅ Import `SerializerMixin` from `sqlalchemy_serializer`
 from sqlalchemy_serializer import SerializerMixin
 
+# 3. ✅ Import validates from sqlalchemy.orm
+
 db = SQLAlchemy()
 
 # ✅ Pass `SerializerMixin` to `Productions`

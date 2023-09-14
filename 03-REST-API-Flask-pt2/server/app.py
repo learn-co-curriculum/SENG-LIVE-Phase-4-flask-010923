@@ -68,8 +68,6 @@ class ProductionById ( Resource ) :
 
 api.add_resource( ProductionById, '/productions/<int:id>', endpoint = 'production' )
 
-# 3.✅ If a production is not found raise the NotFound exception
-
 # 4.✅ Patch
     # 4.1 Create a patch method that takes self and id
     # 4.2 Query the Production from the id
@@ -84,10 +82,6 @@ api.add_resource( ProductionById, '/productions/<int:id>', endpoint = 'productio
     # 5.3 If the production is not found raise the NotFound exception
     # 5.4 delete the production and commit 
     # 5.5 create a response with the status of 204 and return the response 
-
-
-
-api.add_resource(ProductionByID, '/productions/<int:id>')
 
 @app.route( '/cast_members', methods = [ 'GET', 'POST' ] )
 def cast_members ( ) :
