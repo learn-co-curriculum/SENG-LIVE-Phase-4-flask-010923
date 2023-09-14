@@ -3,7 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 # ✅ Import `SerializerMixin` from `sqlalchemy_serializer`
 from sqlalchemy_serializer import SerializerMixin
 
+
 # 3. ✅ Import validates from sqlalchemy.orm
+
+
 
 db = SQLAlchemy()
 
@@ -27,7 +30,6 @@ class Production(db.Model, SerializerMixin):
     # Talk more about how the relationship method works! 🧑‍🏫
     cast_members = db.relationship('CastMember', backref='production')
 
-
     @classmethod
     def all ( cls ) :
         return [ prod.to_dict() for prod in Production.query.all() ]
@@ -35,6 +37,9 @@ class Production(db.Model, SerializerMixin):
     @classmethod
     def find_by_id ( cls, id ) :
         return Production.query.filter_by( id = id ).first()
+
+    # ✅ Create a serialize rule that will help add our `cast_members` to the response.
+    # serialize_rules = ('-cast_members.production',)
 
     def to_dict ( self ) :
         return {
@@ -47,9 +52,6 @@ class Production(db.Model, SerializerMixin):
             'description': self.description,
             'ongoing': self.ongoing
         }
-
-    # ✅ Create a serialize rule that will help add our `cast_members` to the response.
-    # serialize_rules = ('-cast_members.production',)
     
     def to_dict_with_cast ( self ) :
         prod = self.to_dict()
@@ -80,8 +82,11 @@ class CastMember(db.Model, SerializerMixin):
     
     @classmethod
     def find_by_id ( cls, id ) :
-        return CastMember.query.filter_by( id = id ).first()
         # return CastMember.query.filter( CastMember.id == id ).first()
+        return CastMember.query.filter_by( id = id ).first()
+    
+    # ✅ Create a serialize rule that will help add our `production` to the response.
+    # serialize_rules = ('-production.cast_member',)
 
     def to_dict ( self ) :
         return {
@@ -89,14 +94,23 @@ class CastMember(db.Model, SerializerMixin):
             'name': self.name,
             'role': self.role
         }
-    
-    # ✅ Create a serialize rule that will help add our `production` to the response.
-    # serialize_rules = ('-production.cast_member',)
 
     def to_dict_with_prod ( self ) :
         cm = self.to_dict()
         cm[ 'production' ] = self.production.to_dict()
         return cm
     
+
+    # 3.1 Create a validation list for holding validation errors
+
+    # 3.2 Create a method for clearing the validation list
+        
+    # 3.3 Create a validation for that name. It must be a string and more than 0 characters.
+
+    # 3.4 Create a validation for the role. It must be a string and can't be blank.
+
+    # 3.5 Create a validation that makes sure the Production exists
+
+
     def __repr__(self):
         return f'<CastMember Name:{self.name}, Role:{self.role}'
