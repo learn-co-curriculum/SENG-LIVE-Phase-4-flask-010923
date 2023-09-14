@@ -10,6 +10,7 @@
             # 401 = unauthorized ( login )
             # 422 = unprocessable entity ( validation errors )
     # Error handling 
+
 # Set Up:
     # In Terminal, `cd` into `server` and run the following:
         # export FLASK_APP=app.py
