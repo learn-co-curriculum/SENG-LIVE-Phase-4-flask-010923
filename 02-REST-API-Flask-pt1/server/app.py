@@ -92,7 +92,7 @@ def cast_member ( id ) :
     # 204 = no content ( delete )
     # 404 = not found
     # 401 = unauthorized
-    # 422 = unprocessible entity
+    # 422 = unprocessable entity
 
 
 # 3. ✅ Create a Production class that inherits from Resource
