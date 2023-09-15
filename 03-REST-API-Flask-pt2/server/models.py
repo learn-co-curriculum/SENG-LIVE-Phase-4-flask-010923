@@ -5,7 +5,7 @@ from sqlalchemy_serializer import SerializerMixin
 
 
 # 3. ✅ Import validates from sqlalchemy.orm
-
+from sqlalchemy.orm import validates
 
 
 db = SQLAlchemy()
@@ -74,7 +74,7 @@ class CastMember(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    production_id = db.Column(db.Integer, db.ForeignKey('productions.id'))
+    production_id = db.Column(db.Integer, db.ForeignKey('productions.id'), nullable = False)
 
     @classmethod
     def all ( cls ) :
@@ -100,17 +100,39 @@ class CastMember(db.Model, SerializerMixin):
         cm[ 'production' ] = self.production.to_dict()
         return cm
 
-    # 3.1 Create a validation list for holding validation errors
+    # 3.1 Create a class variable for holding validation errors
+    validation_errors = []
 
     # 3.2 Create a method for clearing the validation list
+    @classmethod
+    def clear_validation_errors ( cls ) :
+        cls.validation_errors = []
         
     # 3.3 Create a validation for the name. It must be a string and can't be blank.
-
+    @validates( 'name' )
+    def validates_name( self, db_column, new_name ) :
+        if type( new_name ) is str and new_name :
+            return new_name
+        else :
+            self.validation_errors.append( 'Name must be a string and cannot be blank' )
+    
     # 3.4 Create a validation for the role. It must be a string and can't be blank.
+    @validates( 'role' )
+    def validates_role( self, db_column, new_role ) :
+        if type( new_role ) is str and new_role :
+            return new_role
+        else :
+            self.validation_errors.append( 'Role must be a string and cannot be blank' )
 
     # 3.5 Create a validation that makes sure the Production exists
         # A cast member must be part of a production!!! 🫡
-
+    @validates( 'production_id' )
+    def validates_production ( self, db_column, prod_id ) :
+        prod = Production.find_by_id( prod_id )
+        if prod :
+            return prod_id
+        else :
+            self.validation_errors.append( 'Production was not found.' )
 
 
     def __repr__(self):
