@@ -1,38 +1,16 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { useFormik } from "formik"
-import * as yup from "yup"
-
-
+// import { useFormik } from "formik"
+// import * as yup from "yup"
 
 function ProductionFormEdit({updateProduction, production_edit}) {
   const history = useHistory()
-  const formSchema = yup.object().shape({
-    title: yup.string().required("Must enter a title"),
-    budget: yup.number().positive()
-  })
-
- 
-        const formik = useFormik({
-          initialValues: {
-            title: production_edit.title,
-            genre: production_edit.genre,
-            budget: production_edit.budget,
-            image: production_edit.image,
-            director:  production_edit.director,
-            description: production_edit.description,
-          },
-          validationSchema: formSchema,
-          onSubmit: (values) => {
-           // 10.✅ Add a PATCH
-          },
-        })
-
-    return (
-      <div className='App'>
-      {formik.errors&& Object.values(formik.errors).map(error => <h2>{error}</h2>)}
-      <Form onSubmit={formik.handleSubmit}>
+  
+  return (
+    <div className='App'>
+      { errors ? errors.map(error => <h2>{error}</h2>) : null }
+      <Form onSubmit={ null }>
         <label>Title </label>
         <input type='text' name='title' value={formik.values.title} onChange={formik.handleChange}  />
         
@@ -58,21 +36,40 @@ function ProductionFormEdit({updateProduction, production_edit}) {
   }
   
   export default ProductionFormEdit
-
+  
   const Form = styled.form`
-    display:flex;
-    flex-direction:column;
-    width: 400px;
-    margin:auto;
+  display:flex;
+  flex-direction:column;
+  width: 400px;
+  margin:auto;
+  font-family:Arial;
+  font-size:30px;
+  input[type=submit]{
+    background-color:#42ddf5;
+    color: white;
+    height:40px;
     font-family:Arial;
     font-size:30px;
-    input[type=submit]{
-      background-color:#42ddf5;
-      color: white;
-      height:40px;
-      font-family:Arial;
-      font-size:30px;
-      margin-top:10px;
-      margin-bottom:10px;
-    }
+    margin-top:10px;
+    margin-bottom:10px;
+  }
   `
+  // const formSchema = yup.object().shape({
+  //   title: yup.string().required("Must enter a title"),
+  //   budget: yup.number().positive()
+  // })
+
+  // const formik = useFormik({
+  //   initialValues: {
+  //     title: production_edit.title,
+  //     genre: production_edit.genre,
+  //     budget: production_edit.budget,
+  //     image: production_edit.image,
+  //     director:  production_edit.director,
+  //     description: production_edit.description,
+  //   },
+  //   validationSchema: formSchema,
+  //   onSubmit: (values) => {
+  //    // 10.✅ Add a PATCH
+  //   },
+  // })

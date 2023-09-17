@@ -1,25 +1,14 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-// 6.✅ Verify formik and yet have been added to our package.json dependencies 
-  // import the useFormik hook from formik
-  // import * as yup for yup
-
-
 
 function ProductionForm({addProduction}) {
-
+  
   const history = useHistory()
-  // 7.✅ Use yup to create client side validations
- 
-
-
-  // 9.✅ useFormik hook
-
-
-    return (
-      <div className='App'>
-      <Form >
+  
+  return (
+    <div className='App'>
+      <Form onSubmit={ null } >
         <label>Title </label>
         <input type='text' name='title' />
         
@@ -45,21 +34,24 @@ function ProductionForm({addProduction}) {
   }
   
   export default ProductionForm
-
+  
   const Form = styled.form`
-    display:flex;
-    flex-direction:column;
-    width: 400px;
-    margin:auto;
+  display:flex;
+  flex-direction:column;
+  width: 400px;
+  margin:auto;
+  font-family:Arial;
+  font-size:30px;
+  input[type=submit]{
+    background-color:#42ddf5;
+    color: white;
+    height:40px;
     font-family:Arial;
     font-size:30px;
-    input[type=submit]{
-      background-color:#42ddf5;
-      color: white;
-      height:40px;
-      font-family:Arial;
-      font-size:30px;
-      margin-top:10px;
-      margin-bottom:10px;
-    }
+    margin-top:10px;
+    margin-bottom:10px;
+  }
   `
+// ✅ Verify formik and yet have been added to our package.json dependencies 
+  // import the useFormik hook from formik
+  // import * as yup for yup
