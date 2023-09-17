@@ -1,33 +1,45 @@
 #!/usr/bin/env python3
+
 # 📚 Review With Students:
-    # CORS 
+    # CORS
+    # Error handling 
+    # Status codes
+        # Most common response codes
+            # 200 = ok
+            # 201 = created ( post )
+            # 204 = no content ( delete )
+            # 404 = not found
+            # 401 = unauthorized ( login )
+            # 422 = unprocessable entity ( validation errors )
+            # 418 = I'm a teapot! 🫖
+
 # Set up:
     # cd into server and run the following in Terminal
-        # export FLASK_APP=app.py
-        # export FLASK_RUN_PORT=5000
         # flask db init
         # flask db revision --autogenerate -m'Create tables' 
         # flask db upgrade 
         # python seed.py
-# Running React Together 
-    # Verify that gunicorn and honcho have been added to the pipenv
-    # Create Procfile.dev in root
-        # in Procfile.dev add:
-            # web: PORT=3000 npm start --prefix client
-            # api: gunicorn -b 127.0.0.1:5000 --chdir ./server app:app
-        # In Terminal, run:
-            # `honcho start -f Procfile.dev`
+        # flask shell
+        # Run the server with 'python app.py'
 
-from flask import Flask, request, make_response, abort
+        # ( Optional ) If you want to use the 'flask run' command do these first:
+            # export FLASK_APP=app.py
+            # export FLASK_RUN_PORT=5555
+            # export FLASK_DEBUG=1
+
+# Running React Together 
+
+from flask import Flask, request, make_response, abort, jsonify
 from flask_migrate import Migrate
 
 from flask_restful import Api, Resource
 from werkzeug.exceptions import NotFound
 
-# 4.✅ Import CORS from flask_cors, invoke it and pass it app
+# 1.✅ Import CORS from flask_cors, invoke it and pass it app
 
+# 2.✅ Create validations for the Production model
 
-# 5.✅ Start up the server / client and navigate to client/src/App.js
+# 3.✅ Start up the server / client and navigate to client/src/App.js
 
 from models import db, Production, CastMember
 
@@ -43,179 +55,126 @@ db.init_app(app)
 
 api = Api(app)
 
-class Productions(Resource):
-    def get(self):
-        production_list = [p.to_dict() for p in Production.query.all()]
-        response = make_response(
-            production_list,
-            200,
-        )
-
-        return response
-
-    def post(self):
-        form_json = request.get_json()
-        new_production = Production(
-            title=form_json['title'],
-            genre=form_json['genre'],
-            budget=int(form_json['budget']),
-            image=form_json['image'],
-            director=form_json['director'],
-            description=form_json['description']
-        )
-
-        db.session.add(new_production)
-        db.session.commit()
-
-        response_dict = new_production.to_dict()
-
-        response = make_response(
-            response_dict,
-            201,
-        )
-        return response
-api.add_resource(Productions, '/productions')
-
-
-class ProductionByID(Resource):
-    def get(self,id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were looking for was not found')
-        production_dict = production.to_dict()
-        response = make_response(
-            production_dict,
-            200
-        )
-        
-        return response
-
-
-    def patch(self,id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were trying to update was not found!')
-        request_json = request.get_json()
-        for key in request_json:
-            setattr(production,key,request_json[key])
-        
-        db.session.add(production)
-        db.session.commit()
-
-        response = make_response(
-            production.to_dict(),
-            200
-        )
-
-        return response
-
-
-    def delete(self, id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were looking for was not found!')
-        db.session.delete(production)
-        db.session.commit()
-
-        response = make_response('', 204)
-        
-        return response
-api.add_resource(ProductionByID, '/productions/<int:id>')
-
-
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     response = make_response(
         "Not Found: Sorry the resource you are looking for does not exist",
         404
     )
-
     return response
 
-#Student Exercises 
-class CastMembers(Resource):
-    def get(self):
-        cast_members_list = [cast_member.to_dict() for cast_member in CastMember.query.all()]
+
+class Productions ( Resource ) :
+    def get ( self ) :
+        return make_response( Production.all(), 200 )
     
-        response = make_response(
-            cast_members_list,
-            200
+    def post ( self ) :
+        rq = request.get_json()
+        new_prod = Production(
+            title = rq[ 'title' ],
+            budget = rq[ 'budget' ],
+            genre = rq[ 'genre' ],
+            image = rq[ 'image' ],
+            director = rq[ 'director' ],
+            ongoing = rq[ 'ongoing' ],
+            description = rq[ 'description' ]
         )
-        return response
 
-    def post(self):
-        request_json = request.get_json()
-        new_cast = CastMember(
-            name=request_json['name'],
-            role=request_json['role'],
-            production_id=request_json['production_id']
-        )
-        db.session.add(new_cast)
+        db.session.add( new_prod )
         db.session.commit()
+        return make_response( new_prod.to_dict_with_cast(), 201 )
+    
 
-        response_dict = new_cast.to_dict()
+api.add_resource( Productions, '/productions', endpoint = 'productions' )
+
+class ProductionById ( Resource ) :
+    def get ( self, id ) :
+        prod = Production.find_by_id( id )
+        if prod :
+            return make_response( prod.to_dict_with_cast(), 200 )
+        else :
+            return make_response( { 'errors': ['Production was not found.'] }, 404 )
         
-        response = make_response(
-            response_dict,
-            201
-        )
-        return response
-
-
-
-api.add_resource(CastMembers, '/cast_members')
-
-#'/cast_members/<int:id>'
-class CastMembersByID(Resource):
-    def get(self,id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were looking for was not found!')
+    def patch ( self, id ) :
+        prod = Production.find_by_id( id )
+        if prod :
+            rq = request.get_json()
+            for attr in rq :
+                setattr( prod, attr, rq[ attr] )
+                return make_response( prod.to_dict_with_cast(), 200 )
+        else :
+            return make_response( { 'errors': ['Production was not found.'] }, 404 )
         
-        production_dict = production.to_dict()
-        response = make_response(
-            production_dict,
-            200
-        )
-        
-        return response
-    #patch
-    def patch(self, id):
-        cast_member = CastMember.query.filter_by(id=id).first()
-        if not cast_member:
-            abort(404, 'The cast member you were trying to update was not found!')
-
-        request_json = request.get_json()
-        for key in request_json:
-            setattr(cast_member, key, request_json[key])
-
-        db.session.add(cast_member)
-        db.session.commit()
-
-        response = make_response(
-            cast_member.to_dict(),
-            200
-        )
-
-        return response
-
-    def delete(self, id):
-            production = Production.query.filter_by(id=id).first()
-            if not production:
-                abort(404, 'The Production you were trying to delete was not found!')
-
-            db.session.delete(production)
+    def delete ( self, id ) :
+        prod = Production.find_by_id( id )
+        if prod :
+            for cm in prod.cast_members :
+                db.session.delete( cm )
+            db.session.delete( prod )
             db.session.commit()
+            return make_response( {}, 204 )
 
-            response = make_response('', 204)
+api.add_resource( ProductionById, '/productions/<int:id>', endpoint = 'production' )
 
-            return response
-api.add_resource(CastMembersByID, '/cast_members/<int:id>')
 
+@app.route( '/cast_members', methods = [ 'GET', 'POST' ] )
+def cast_members ( ) :
+    if request.method == 'GET' :
+        return make_response( CastMember.all(), 200 )
+    
+    elif request.method == 'POST' :
+        rq = request.get_json()
+        new_cm = CastMember(
+            name = rq[ 'name' ],
+            role = rq[ 'role' ],
+            # A cast member should be part of a production!!!
+            production_id = rq[ 'production_id' ]
+        )
+        errors = new_cm.validation_errors
+        if errors :
+            new_cm.clear_validation_errors()
+            return make_response( { 'errors': errors }, 422 )
+        else :
+            db.session.add( new_cm )
+            db.session.commit()
+            return make_response( new_cm.to_dict() , 201 )
+
+
+@app.route( '/cast_members/<int:id>', methods = [ 'GET', 'PATCH', 'DELETE' ] )
+def cast_member ( id ) :
+    cm = CastMember.find_by_id( id )
+    if cm :
+        if request.method == 'GET' :
+            return make_response( cm.to_dict_with_prod(), 200 )
+        elif request.method == 'DELETE' :
+            db.session.delete( cm )
+            db.session.commit()
+            return make_response( {}, 204 )
+        elif request.method == 'PATCH' :
+            rq = request.get_json()
+
+            new_cm = CastMember(
+            name = rq[ 'name' ],
+            role = rq[ 'role' ],
+            production_id = rq[ 'production_id' ]
+        )
+        errors = new_cm.validation_errors
+        if errors :
+            new_cm.clear_validation_errors()
+            return make_response( { 'errors': errors }, 422 )
+        else :
+            cm.name = rq[ 'name' ]
+            cm.role = rq[ 'role' ]
+            cm.production_id = rq[ 'production_id' ]
+            db.session.add( cm )
+            db.session.commit()
+            return make_response( cm.to_dict_with_prod(), 200 )
+    else :
+        return make_response( { 'errors': ['Cast member was not found.'] }, 404 )
 
 # To run the file as a script
-# if __name__ == '__main__':
-#     app.run(port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(port=5555, debug=True)
 
 #Sample Data for testing POST
 # {
