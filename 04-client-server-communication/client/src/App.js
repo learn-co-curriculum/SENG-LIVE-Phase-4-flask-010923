@@ -15,9 +15,13 @@ function App() {
   const [productions, setProductions] = useState([])
   const [production_edit, setProductionEdit] = useState(false)
   const history = useHistory()
-  //5.✅ GET Productions
+  // 4.✅ GET Productions from our Flask API
   
-  // 6.✅ navigate to client/src/components/ProductionForm.js
+  // 5.✅ navigate to client/src/components/ProductionForm.js and get the form working
+
+  // 6.✅ Get the ProductionDetail component up and running 
+
+  // 7.✅ Navigate to the ProductionEdit.js and hook it up
 
   const addProduction = (production) => setProductions(productions => [...productions,production])
   const updateProduction = (updated_production) => setProductions(productions => productions.map(production =>{
@@ -33,6 +37,7 @@ function App() {
     setProductionEdit(production)
     history.push(`/productions/edit/${production.id}`)
   }
+
   return (
     <>
     <GlobalStyle />

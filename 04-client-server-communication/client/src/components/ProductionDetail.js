@@ -3,8 +3,8 @@ import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 
 function ProductionDetail({handleEdit, deleteProduction}) {
-  const [production, setProduction] = useState({cast_members:[]})
-  const [error, setError] = useState(null)
+  const [ production, setProduction ] = useState({cast_members:[]})
+  const [ errors, setErrors ] = useState(null)
   //Student Challenge: GET One 
   const params = useParams()
   const history = useHistory()
@@ -18,7 +18,12 @@ function ProductionDetail({handleEdit, deleteProduction}) {
 
   
   const {id, title, genre, image,description, cast_members} = production 
-  if(error) return <h2>{error}</h2>
+  if( errors )
+    return (
+      <div>
+        { errors.map( error => <h2>{ error }</h2> ) }
+      </div>
+    )
   return (
       <CardDetail id={id}>
         <h1>{title}</h1>
@@ -37,7 +42,6 @@ function ProductionDetail({handleEdit, deleteProduction}) {
           </div>
       <button onClick={()=> handleEdit(production)} >Edit Production</button>
       <button onClick={()=> handleDelete(production)} >Delete Production</button>
-
       </CardDetail>
     )
   }
