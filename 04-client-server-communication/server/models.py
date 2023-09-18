@@ -57,6 +57,36 @@ class Production(db.Model, SerializerMixin):
     
     # ✅ Create validations for the Production model
 
+    validation_errors = []
+
+    @classmethod
+    def clear_validation_errors ( cls ) :
+        cls.validation_errors = []
+    
+    @validates( 'title' )
+    def validate_title ( self, db_column, new_title ) :
+        if type( new_title ) is str and new_title :
+            return new_title
+        else :
+            self.validation_errors.append( 'Title must be a string with at least 1 character.' )
+
+    @validates( 'director' )
+    def validate_director ( self, db_column, new_director ) :
+        if type( new_director ) is str and new_director :
+            return new_director
+        else :
+            self.validation_errors.append( 'Director must be a string with at least 1 character.' )
+
+    @validates( 'budget' )
+    def validate_budget ( self, db_column, new_budget ) :
+        if isinstance( new_budget, float ) :
+            if new_budget > 1000.00 :
+                return new_budget
+            else : 
+                self.validation_errors.append( 'Budget must be more than $1000.' )
+        else :
+            self.validation_errors.append( 'Budget must be a float.' )
+
     def __repr__(self):
         return f'<Production Title:{self.title}, Genre:{self.genre}, Budget:{self.budget}, Image:{self.image}, Director:{self.director},ongoing:{self.ongoing}>'
 

@@ -2,22 +2,27 @@ import  {useParams, useHistory } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 
-function ProductionDetail({handleEdit, deleteProduction}) {
-  const [ production, setProduction ] = useState({cast_members:[]})
+function ProductionDetail({handleEdit, deleteProduction, productionsUrl}) {
+  const [ production, setProduction ] = useState({cast:[]})
   const [ errors, setErrors ] = useState(null)
   //Student Challenge: GET One 
   const params = useParams()
   const history = useHistory()
   useEffect(()=>{
+    fetch( productionsUrl + `/${params.id}` )
+    .then( r => r.json() )
+    .then( setProduction )
 
   },[])
+
+  console.log( params.id )
 
   const handleDelete = (production) => {
 
   }
 
   
-  const {id, title, genre, image,description, cast_members} = production 
+  const {id, title, genre, image,description, cast} = production 
   if( errors )
     return (
       <div>
@@ -35,7 +40,7 @@ function ProductionDetail({handleEdit, deleteProduction}) {
               <p>{description}</p>
               <h2>Cast Members</h2>
               <ul>
-                {cast_members.map(cast => <li>{`${cast.role} : ${cast.name}`}</li>)}
+                {cast.map(cm => <li>{`${cm.role} : ${cm.name}`}</li>)}
               </ul>
             </div>
             <img src={image}/>
