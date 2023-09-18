@@ -2,16 +2,17 @@
 
 # 📚 Review With Students:
     # CORS
-    # Error handling 
-    # Status codes
-        # Most common response codes
-            # 200 = ok
-            # 201 = created ( post )
-            # 204 = no content ( delete )
-            # 404 = not found
-            # 401 = unauthorized ( login )
-            # 422 = unprocessable entity ( validation errors )
-            # 418 = I'm a teapot! 🫖
+    # Error handling
+
+# Status codes
+    # Most common response codes
+        # 200 = ok
+        # 201 = created ( post )
+        # 204 = no content ( delete )
+        # 404 = not found
+        # 401 = unauthorized ( login )
+        # 422 = unprocessable entity ( validation errors )
+        # 418 = I'm a teapot! 🫖
 
 # Set up:
     # cd into server and run the following in Terminal
