@@ -2,30 +2,55 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 
-function ProductionForm({addProduction}) {
+const initialState = {
+  title: '',
+  director: '',
+  budget: '',
+  description: '',
+  genre: '',
+  image: '',
+}
+
+function ProductionForm({addProduction, createNewProduction, errors}) {
+
+  const [ formState, setFormState ] = useState( initialState )
+
+  const updateFormState = event => {
+    const { name, value } = event.target
+    const newFormState = { ...formState, [ name ] : value }
+    if ( name == 'budget' ) {
+      newFormState.budget = parseFloat( newFormState.budget )
+    }
+    setFormState( newFormState )
+  }
   
   const history = useHistory()
+
   
   return (
     <div className='App'>
-      <Form onSubmit={ null } >
+      { errors ? 
+        <div>
+          { errors.map( error => <li>{error}</li> ) }
+        </div> : null }
+      <Form onSubmit={ ( event ) => createNewProduction( formState, event ) } >
         <label>Title </label>
-        <input type='text' name='title' />
+        <input type='text' name='title' value = { formState.title } onChange={ updateFormState } />
         
         <label> Genre</label>
-        <input type='text' name='genre' />
+        <input type='text' name='genre' value = { formState.genre } onChange={ updateFormState } />
       
         <label>Budget</label>
-        <input type='number' name='budget' />
+        <input type='number' name='budget' value = { formState.budget } onChange={ updateFormState }/>
       
         <label>Image</label>
-        <input type='text' name='image'  />
+        <input type='text' name='image' value = { formState.image } onChange={ updateFormState } />
       
         <label>Director</label>
-        <input type='text' name='director'/>
+        <input type='text' name='director' value = { formState.director } onChange={ updateFormState }/>
       
         <label>Description</label>
-        <textarea type='text' rows='4' cols='50' name='description' />
+        <textarea type='text' rows='4' cols='50' name='description' value = { formState.description } onChange={ updateFormState }/>
       
         <input type='submit' />
       </Form> 

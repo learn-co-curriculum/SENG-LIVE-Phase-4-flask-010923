@@ -37,6 +37,8 @@ from flask_restful import Api, Resource
 from werkzeug.exceptions import NotFound
 
 # 1.✅ Import CORS from flask_cors, invoke it and pass it app
+from flask_cors import CORS
+
 
 # 2.✅ Create validations for the Production model
 
@@ -53,8 +55,8 @@ app.json.compact = False
 migrate = Migrate(app, db)
 db.init_app(app)
 
-
 api = Api(app)
+CORS( app )
 
 @app.errorhandler(NotFound)
 def handle_not_found(e):
@@ -77,14 +79,18 @@ class Productions ( Resource ) :
             genre = rq[ 'genre' ],
             image = rq[ 'image' ],
             director = rq[ 'director' ],
-            ongoing = rq[ 'ongoing' ],
             description = rq[ 'description' ]
         )
 
-        db.session.add( new_prod )
-        db.session.commit()
-        return make_response( new_prod.to_dict_with_cast(), 201 )
-    
+        errors = new_prod.validation_errors
+        if errors :
+            new_prod.clear_validation_errors()
+            return make_response( { 'errors': errors }, 422 )
+        else :
+            db.session.add( new_prod )
+            db.session.commit()
+            return make_response( new_prod.to_dict_with_cast(), 201 )
+        
 
 api.add_resource( Productions, '/productions', endpoint = 'productions' )
 
@@ -101,7 +107,24 @@ class ProductionById ( Resource ) :
         if prod :
             rq = request.get_json()
             for attr in rq :
-                setattr( prod, attr, rq[ attr] )
+                setattr( prod, attr, rq[ attr ] )
+
+            new_prod = Production(
+                title = prod[ 'title' ],
+                budget = prod[ 'budget' ],
+                genre = prod[ 'genre' ],
+                image = prod[ 'image' ],
+                director = prod[ 'director' ],
+                description = prod[ 'description' ]
+            )
+            
+            errors = new_prod.validation_errors
+            if errors :
+                new_prod.clear_validation_errors()
+                return make_response( { 'errors': errors }, 422 )
+            else :
+                db.session.add( prod )
+                db.session.commit()
                 return make_response( prod.to_dict_with_cast(), 200 )
         else :
             return make_response( { 'errors': ['Production was not found.'] }, 404 )
