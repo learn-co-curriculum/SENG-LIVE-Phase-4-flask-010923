@@ -118,14 +118,9 @@ class Mission(db.Model, SerializerMixin):
         }
     
     def to_dict_with_ps ( self ) :
-        return {
-            'id': self.id,
-            'name': self.name,
-            'planet_id': self.planet_id,
-            'scientist_id': self.scientist_id,
-            'planet': self.planet.to_dict(),
-            'scientist': self.scientist.to_dict()
-        }
+        mission = self.to_dict()
+        mission[ 'scientist' ] = self.scientist.to_dict()
+        return mission
 
 
     # Add validation
