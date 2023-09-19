@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:wght@400;700&display=swap");
+body {
+  margin: 0;
+  font: 100% "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: midnightblue;
+}
+
+a:hover {
+  color: lime;
+}
+
+a:visited {
+  color: hsl(49deg, 95%, 52%);
+}
+
+main {
+  padding: 10px;
+  background-color: rgb(71, 66, 66);
+  color: turquoise;
+  font: 100% "Chakra Petch", sans-serif;
+}
+
+nav {
+  font: 120% "Audiowide", cursive;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  background: linear-gradient(200deg, red, violet);
+  background-size: 600% 600%;
+  background-attachment: fixed;
+  height: 100%;
+  min-height: 100%;
+  animation: TackyGradient 12s ease infinite;
+}
+nav img {
+  width: 80px;
+}
+
+.sciList, .planetList {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+}
+.sciList div:hover, .planetList div:hover {
+  box-shadow: 3px 3px 6px magenta;
+}
+
+.scicard, .planetCard {
+  margin: 5px 0;
+  padding: 5px;
+  color: magenta;
+  border: 1px solid grey;
+  border-radius: 12px;
+  background-color: turquoise;
+}
+.scicard img, .planetCard img {
+  width: 100px;
+}
+.scicard button, .planetCard button {
+  background-color: rgb(255, 0, 106);
+  color: white;
+  border-radius: 20px;
+}
+
+input[type=text] {
+  height: 28px;
+  border-radius: 12px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+@keyframes TackyGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */
