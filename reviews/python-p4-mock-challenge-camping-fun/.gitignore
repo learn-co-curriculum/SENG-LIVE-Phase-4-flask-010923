@@ -52,11 +52,6 @@ jspm_packages
 __pycache__
 
 
-*.db
-*/*.db
-migrations
-instance
-
 
 .vscode
 
