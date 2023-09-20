@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
 from faker import Faker
 
+# Don't forget to change our imports in here too! We should have a config file now!
 from app import app
 from models import db, Production, CastMember, User
 
 
 fake = Faker()
 
-with app.app_context():   
+with app.app_context():
+
+    print( 'Starting database seed... 🌱' )
+    
+    print( 'Clearing tables... 🧼' )
     Production.query.delete()
     CastMember.query.delete()
+    User.query.delete()
+    print( 'Tables cleared! 🥂' )
 
+
+    print( 'Creating Productions...' )
     productions = []
  
     p1 = Production(title='Hamlet', genre= 'Drama', director='Bill Shakespeare', description='The Tragedy of Hamlet, Prince of Denmark', budget= 100000.00, image='https://upload.wikimedia.org/wikipedia/commons/6/6a/Edwin_Booth_Hamlet_1870.jpg', ongoing=True)
@@ -29,9 +38,16 @@ with app.app_context():
     
     productions.append(p4)
 
+    p5 = Production( title = 'Avocado Toast 🥑', genre = 'Horror', director = 'Def Repr', image = 'https://lovingitvegan.com/wp-content/uploads/2015/11/Avocado-Toast-16.jpg', budget = 2000.00, ongoing = True, description = "The tragedy of having no money for the greatest and most delicious of foods. Tells the heartbreaking story of an entire generations' life struggles." )
+
+    productions.append( p5 )
+
     db.session.add_all(productions)
     db.session.commit()
+    print( 'Productions created! 🎬' )
 
+
+    print( 'Auditions are taking place... 🎤' )
     hamlet_roles = ['Hamlet', 'Ophelia', 'Polonius', 'Laertes', 'Horatio', 'Gertrude', 'Ghost' ]
     hamlet_cast_members = [CastMember(name=fake.name(), role=role, production_id=p1.id) for role in hamlet_roles]
     db.session.add_all(hamlet_cast_members)
@@ -52,7 +68,21 @@ with app.app_context():
     db.session.add_all(hamilton_cast_members)
     db.session.commit()
 
-    # user = User(name='Rose Thecat', email='rose_is_cute@gmail.com')
-    # db.session.add(user)
+    thomas = CastMember( name = 'Thomas 🐺', role = 'Instructor #1', production_id = p2.id )
+    princeton = CastMember( name = 'Princeton 🌹', role = 'Mob Boss', production_id = p1.id )
+    db.session.add_all( [ thomas, princeton ] )
+    db.session.commit()
+    print( 'All roles have been filled! 🎭' )
+
+
+    users = []
+
+    # print( 'Creating users for the app... 👲' )
+    # u1 = User( ??? )
+    # users.append( u1 )
+    # db.session.add_all( users )
     # db.session.commit()
+    # print( 'Users created! 🍻' )
+
+    print( 'Seeding complete!!! 🌴' )
 
