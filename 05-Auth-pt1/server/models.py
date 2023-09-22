@@ -1,11 +1,11 @@
 # 📚 Review With Students:
-   # The dangers of plain text passwords 
-   # What Hashing is
-     # Hashing vs encryption 
-     # How to Hash a string   
-   # Salting 
-     #Rainbow Tables
-   # Bcrypt
+    # The dangers of plain text passwords 
+    # What Hashing is
+        # Hashing vs encryption 
+        # How to Hash a string   
+    # Salting 
+        #Rainbow Tables
+    # Bcrypt
 
 
 # Let's move our flask_sqlalchemy import and the db line into our config file first to help clean up our code!
@@ -62,17 +62,17 @@ class Production(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
-    cast_members = db.relationship('CastMember', backref='production')
+    cast = db.relationship('CastMember', backref='production')
+    
+    serialize_rules = ('-cast.production',)
 
     @classmethod
     def all ( cls ) :
-        return [ prod.to_dict() for prod in Production.query.all() ]
+        return [ prod.to_dict( rules = ('-cast',) ) for prod in Production.query.all() ]
     
     @classmethod
     def find_by_id ( cls, id ) :
         return Production.query.filter_by( id = id ).first()
-
-    serialize_rules = ('-cast_members.production',)
     
     validation_errors = []
 
@@ -121,6 +121,8 @@ class CastMember(db.Model, SerializerMixin):
 
     production_id = db.Column(db.Integer, db.ForeignKey('productions.id'), nullable = False)
 
+    serialize_rules = ('-production.cast',)
+
     @classmethod
     def all ( cls ) :
         return [ cm.to_dict() for cm in CastMember.query.all() ]
@@ -128,8 +130,6 @@ class CastMember(db.Model, SerializerMixin):
     @classmethod
     def find_by_id ( cls, id ) :
         return CastMember.query.filter_by( id = id ).first()
-
-    serialize_rules = ('-production.cast_member',)
 
     validation_errors = []
 

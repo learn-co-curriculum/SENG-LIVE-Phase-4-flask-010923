@@ -101,86 +101,78 @@ api = Api(app)
 
 class Productions(Resource):
     def get(self):
-        production_list = [p.to_dict() for p in Production.query.all()]
-        response = make_response(
-            production_list,
-            200,
-        )
-
-        return response
+        return Production.all(), 200
 
     def post(self):
-        form_json = request.get_json()
-        try:
-            new_production = Production(
-                title=form_json['title'],
-                genre=form_json['genre'],
-                budget=int(form_json['budget']),
-                image=form_json['image'],
-                director=form_json['director'],
-                description=form_json['description']
+        rq = request.get_json()
+        try :
+            new_prod = Production(
+                title=rq['title'],
+                genre=rq['genre'],
+                budget=int(rq['budget']),
+                image=rq['image'],
+                director=rq['director'],
+                description=rq['description']
             )
-        except ValueError as e:
-            abort(422,e.args[0])
+        
+            if new_prod.validation_errors :
+                raise ValueError
+            
+            db.session.add( new_prod )
+            db.session.commit()
+            return new_prod.to_dict(), 201
+        
+        except :
+            errors = new_prod.validation_errors
+            new_prod.clear_validation_errors()
+            return { 'errors': errors }, 422
 
-        db.session.add(new_production)
-        db.session.commit()
-
-        response_dict = new_production.to_dict()
-
-        response = make_response(
-            response_dict,
-            201,
-        )
-        return response
 api.add_resource(Productions, '/productions')
 
 
 class ProductionByID(Resource):
     def get(self,id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were looking for was not found')
-        production_dict = production.to_dict()
-        response = make_response(
-            production_dict,
-            200
-        )
-        
-        return response
+        prod = Production.find_by_id( id )
+        if prod:
+            return prod.to_dict(), 200
+        else :
+            return { 'errors': ['Production not found.'] }, 404
 
     def patch(self, id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were trying to update for was not found')
+        prod = Production.find_by_id( id )
+        if prod:
+            try: 
+                for attr in request.form:
+                    setattr(prod, attr, request.form[attr])
 
-        for attr in request.form:
-            setattr(production, attr, request.form[attr])
+                prod.ongoing = bool(request.form['ongoing'])
+                prod.budget = int(request.form['budget'])
 
-        production.ongoing = bool(request.form['ongoing'])
-        production.budget = int(request.form['budget'])
-
-        db.session.add(production)
-        db.session.commit()
-
-        production_dict = production.to_dict()
-        
-        response = make_response(
-            production_dict,
-            200
-        )
-        return response
+                if prod.validation_errors :
+                    raise ValueError
+                
+                db.session.add( prod )
+                db.session.commit()
+                return prod.to_dict(), 200
+            
+            except :
+                errors = prod.validation_errors
+                prod.clear_validation_errors()
+                return { 'errors': errors }, 422
+        else :
+            return { 'errors': ['Production not found.'] }, 404
 
     def delete(self, id):
-        production = Production.query.filter_by(id=id).first()
-        if not production:
-            abort(404, 'The Production you were trying to delete was not found')
-        db.session.delete(production)
-        db.session.commit()
+        prod = Production.find_by_id( id )
+        if prod :
+            for cm in prod.cast :
+                db.session.delete( cm )
+            db.session.delete( prod )
+            db.session.commit()
+            return {}, 204
+        else :
+            return { 'errors': ['Production not found.'] }, 404
 
-        response = make_response('', 204)
-        
-        return response
 api.add_resource(ProductionByID, '/productions/<int:id>')
 
 

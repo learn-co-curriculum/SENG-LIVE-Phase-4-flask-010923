@@ -16,12 +16,13 @@ with app.app_context():
     Production.query.delete()
     CastMember.query.delete()
     User.query.delete()
+    db.session.commit()
     print( 'Tables cleared! 🥂' )
 
 
     print( 'Creating Productions...' )
     productions = []
- 
+
     p1 = Production(title='Hamlet', genre= 'Drama', director='Bill Shakespeare', description='The Tragedy of Hamlet, Prince of Denmark', budget= 100000.00, image='https://upload.wikimedia.org/wikipedia/commons/6/6a/Edwin_Booth_Hamlet_1870.jpg', ongoing=True)
     
     productions.append(p1)
